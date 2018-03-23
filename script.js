@@ -30,7 +30,7 @@ ws.onmessage = (e) => {
     if (received.type == 'message') {
         document.querySelector('.messages').innerHTML += received.nickname + ' said : ';
         for (var i in received.content) {
-            document.querySelector('.messages').innerHTML += received.content[i];
+            document.querySelector('.messages').innerHTML += received.content[i] + ' ';
         }
     }
 }
