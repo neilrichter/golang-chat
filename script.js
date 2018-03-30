@@ -1,4 +1,4 @@
-var ws = new WebSocket("ws://10.38.163.155:9999/connws/");
+var ws = new WebSocket("ws://localhost:9999/connws/");
 
 ws.onopen = () => {
     user = prompt('Username');

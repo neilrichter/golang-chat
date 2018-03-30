@@ -17,11 +17,19 @@ type Data struct {
 	New      string `json:"new"`
 }
 
+// Connection structure
+type Connection struct {
+	ID    int
+	Value string
+}
+
 func main() {
 	fmt.Println("Server started")
-	hub := []*websocket.Conn{}
+	hub := make(map[int]*websocket.Conn)
+	count := 0
 	http.Handle("/connws/", websocket.Handler(func(ws *websocket.Conn) {
-		hub = append(hub, ws)
+		hub[count] = ws
+		count++
 		var data Data
 		for {
 			err := websocket.JSON.Receive(ws, &data)
