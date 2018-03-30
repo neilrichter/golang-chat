@@ -1,10 +1,10 @@
-var ws = new WebSocket("ws://10.38.164.214:9999/connws/");
+var ws = new WebSocket("ws://10.38.163.155:9999/connws/");
 
 ws.onopen = () => {
     user = prompt('Username');
     document.querySelector('form[name="message"] input').focus();
     console.log('Connexion établie');
-    document.querySelector('form[name="message"]').onsubmit = (e) => {
+    document.querySelector('form[name="message"]').onsubmit = e => {
         var data = {
             type: "message",
             nickname: user,
@@ -14,9 +14,21 @@ ws.onopen = () => {
         e.target.reset();
         return false;
     }
+    document.querySelector('form[name="pseudo"]').onsubmit = e => {
+        var newName = document.querySelector('form[name=pseudo] input').value
+        var data = {
+            type: "pseudo",
+            nickname: user,
+            content: `${user} renamed to ${newName}`
+        }
+        ws.send(JSON.stringify(data));
+        e.target.reset();
+        user = newName;
+        return false;
+    }
 }
 
-ws.onmessage = (e) => {
+ws.onmessage = e => {
     console.log('Message reçu');
     received = JSON.parse(e.data);
     regexp = /http.+\.gif/g;
@@ -32,15 +44,21 @@ ws.onmessage = (e) => {
         for (var i in received.content) {
             document.querySelector('.messages').innerHTML += received.content[i] + ' ';
         }
+        document.querySelector('.messages').innerHTML += '<br>';
+    } else if (received.type == 'pseudo') {
+        for (var i in received.content) {
+            document.querySelector('.messages').innerHTML += received.content[i] + ' ';
+        }
+        document.querySelector('.messages').innerHTML += '<br>';
     }
 }
 
-ws.onerror = (e) => {
+ws.onerror = e => {
     console.log('Erreur');
     console.log(e);
 }
 
-ws.onclose = (e) => {
+ws.onclose = e => {
     console.log('Connexion fermée');
     delete ws;
 }
