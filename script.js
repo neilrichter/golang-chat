@@ -56,6 +56,8 @@ ws.onmessage = e => {
             document.querySelector('.messages').innerHTML += received.content[i] + ' ';
         }
         document.querySelector('.messages').innerHTML += '<br>';
+    } else if (received.type == 'draw') {
+        ctx.fillRect(received.currX,received.currY,1,1);
     }
 }
 
@@ -88,6 +90,7 @@ function findxy(res, e) {
     }
     if (res == 'up' || res == "out") {
         flag = false;
+        console.log('UP');
     }
     if (res == 'move') {
         if (flag) {
@@ -95,6 +98,12 @@ function findxy(res, e) {
             prevY = currY;
             currX = e.clientX - canvas.offsetLeft;
             currY = e.clientY - canvas.offsetTop;
+            var data = {
+                type: "draw",
+                "currX": currX,
+                "currY": currY
+            }
+            ws.send(JSON.stringify(data));
             draw();
         }
     }
