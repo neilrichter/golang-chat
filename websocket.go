@@ -17,34 +17,36 @@ type Data struct {
 	New      string `json:"new"`
 }
 
-// Connection structure
-type Connection struct {
-	ID    int
-	Value string
-}
+var count = 0
+var hub = make(map[int]*websocket.Conn)
 
 func main() {
 	fmt.Println("Server started")
-	hub := make(map[int]*websocket.Conn)
-	count := 0
 	http.Handle("/connws/", websocket.Handler(func(ws *websocket.Conn) {
-		hub[count] = ws
-		count++
+		current := connexion(ws)
+		fmt.Println("The hub:", hub)
 		var data Data
 		for {
 			err := websocket.JSON.Receive(ws, &data)
 			if err != nil {
-				fmt.Println(err)
+				delete(hub, current)
 				ws.Close()
-				break
+				fmt.Println("The hub:", hub)
+				return
 			}
 			result, _ := json.Marshal(data)
 			for _, i := range hub {
-				fmt.Println(data.Content)
-				websocket.Message.Send(i, string(result))
+				_ = websocket.Message.Send(i, string(result))
 			}
 		}
 	}))
 
 	http.ListenAndServe(":9999", nil)
+}
+
+func connexion(ws *websocket.Conn) int {
+	hub[count] = ws
+	current := count
+	count++
+	return current
 }
