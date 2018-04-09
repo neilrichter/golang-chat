@@ -1,7 +1,8 @@
-var ws = new WebSocket("ws://10.38.163.155:9999/connws/");
+var ws = new WebSocket("ws://localhost:9999/connws/");
 
 window.onload = () => {
     init();
+    ctx2 = canvas.getContext("2d");
 }
 
 ws.onopen = () => {
@@ -57,7 +58,9 @@ ws.onmessage = e => {
         }
         document.querySelector('.messages').innerHTML += '<br>';
     } else if (received.type == 'draw') {
-        ctx.fillRect(received.currX,received.currY,1,1);
+        ctx2.moveTo(received.prevX, received.prevY);
+        ctx2.lineTo(received.currX,received.currY);
+        ctx2.stroke();
     }
 }
 
@@ -100,6 +103,8 @@ function findxy(res, e) {
             currY = e.clientY - canvas.offsetTop;
             var data = {
                 type: "draw",
+                "prevX": prevX,
+                "prevY": prevY,
                 "currX": currX,
                 "currY": currY
             }
