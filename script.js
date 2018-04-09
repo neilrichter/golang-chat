@@ -39,7 +39,7 @@ ws.onmessage = e => {
     console.log('Message reçu');
     received = JSON.parse(e.data);
     regexp = /http.+\.gif/g;
-    found = received.content.match(regexp)
+    found = received.content.match(regexp);
     received.content = received.content.split(' ');
     for (var i in received.content) {
         if (received.content[i].match(regexp)) {
