@@ -2,6 +2,7 @@ var ws = new WebSocket("ws://localhost:9999/connws/");
 
 window.onload = () => {
     init();
+    ctx2 = canvas.getContext("2d");
 }
 
 ws.onopen = () => {
@@ -38,7 +39,7 @@ ws.onmessage = e => {
     console.log('Message reçu');
     received = JSON.parse(e.data);
     regexp = /http.+\.gif/g;
-    found = received.content.match(regexp)
+    found = received.content.match(regexp);
     received.content = received.content.split(' ');
     for (var i in received.content) {
         if (received.content[i].match(regexp)) {
@@ -56,10 +57,10 @@ ws.onmessage = e => {
             document.querySelector('.messages').innerHTML += received.content[i] + ' ';
         }
         document.querySelector('.messages').innerHTML += '<br>';
-    } else if (received.type === "draw") {
-        ctx.moveTo(received.prevX, received.prevY);
-        ctx.lineTo(received.currX, received.currY);
-        ctx.stroke();
+    } else if (received.type == 'draw') {
+        ctx2.moveTo(received.prevX, received.prevY);
+        ctx2.lineTo(received.currX,received.currY);
+        ctx2.stroke();
     }
 }
 
@@ -98,14 +99,14 @@ function findxy(res, e) {
         if (flag) {
             prevX = currX;
             prevY = currY;
-            currX = e.layerX - canvas.offsetLeft;
-            currY = e.layerY - canvas.offsetTop;
+            currX = e.clientX - canvas.offsetLeft;
+            currY = e.clientY - canvas.offsetTop;
             var data = {
                 type: "draw",
-                "currX": currX,
-                "currY": currY,
                 "prevX": prevX,
-                "prevY": prevY
+                "prevY": prevY,
+                "currX": currX,
+                "currY": currY
             }
             ws.send(JSON.stringify(data));
             draw();

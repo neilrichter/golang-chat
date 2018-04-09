@@ -16,10 +16,10 @@ type Data struct {
 	Content  string `json:"content"`
 	Old      string `json:"old"`
 	New      string `json:"new"`
-	CurrX    int    `json:"currX"`
-	CurrY    int    `json:"currY"`
 	PrevX    int    `json:"prevX"`
 	PrevY    int    `json:"prevY"`
+	CurrX    int    `json:"currX"`
+	CurrY    int    `json:"currY"`
 }
 
 var count = 0
