@@ -56,6 +56,10 @@ ws.onmessage = e => {
             document.querySelector('.messages').innerHTML += received.content[i] + ' ';
         }
         document.querySelector('.messages').innerHTML += '<br>';
+    } else if (received.type === "draw") {
+        ctx.moveTo(received.prevX, received.prevY);
+        ctx.lineTo(received.currX, received.currY);
+        ctx.stroke();
     }
 }
 
@@ -88,13 +92,22 @@ function findxy(res, e) {
     }
     if (res == 'up' || res == "out") {
         flag = false;
+        console.log('UP');
     }
     if (res == 'move') {
         if (flag) {
             prevX = currX;
             prevY = currY;
-            currX = e.clientX - canvas.offsetLeft;
-            currY = e.clientY - canvas.offsetTop;
+            currX = e.layerX - canvas.offsetLeft;
+            currY = e.layerY - canvas.offsetTop;
+            var data = {
+                type: "draw",
+                "currX": currX,
+                "currY": currY,
+                "prevX": prevX,
+                "prevY": prevY
+            }
+            ws.send(JSON.stringify(data));
             draw();
         }
     }

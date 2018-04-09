@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
 
 	"golang.org/x/net/websocket"
 )
@@ -15,10 +16,15 @@ type Data struct {
 	Content  string `json:"content"`
 	Old      string `json:"old"`
 	New      string `json:"new"`
+	CurrX    int    `json:"currX"`
+	CurrY    int    `json:"currY"`
+	PrevX    int    `json:"prevX"`
+	PrevY    int    `json:"prevY"`
 }
 
 var count = 0
 var hub = make(map[int]*websocket.Conn)
+var mutex = &sync.Mutex{}
 
 func main() {
 	fmt.Println("Server started")
@@ -45,8 +51,10 @@ func main() {
 }
 
 func connexion(ws *websocket.Conn) int {
+	mutex.Lock()
 	hub[count] = ws
 	current := count
 	count++
+	mutex.Unlock()
 	return current
 }
